@@ -19,7 +19,8 @@ exports.createCategory = async(req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: `${category.name} created successfully`
+            message: `${Category.name} created successfully`,
+            categoryDetails,
         });
 
     }catch(error){
@@ -56,11 +57,11 @@ exports.categoryPageDetails = async(req, res) => {
 
         //get courses for specified id
         const selectedCategory = await Category.findById(categoryId)
-                                .populate("Courses")
+                                .populate("course")
                                 .exec();
 
         //validation
-        if(!selectedCourses){
+        if(!selectedCategory){
             return res.status(404).json({
                 success: false,
                 message: "No Data found"
@@ -71,7 +72,7 @@ exports.categoryPageDetails = async(req, res) => {
         const differentCategories = await Category.find({
             _id: {$ne: categoryId}, // ne = not equal
         })
-        .populate("courses")
+        .populate("course")
         .exec();
 
         //get top selling courses

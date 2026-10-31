@@ -4,8 +4,12 @@ require('dotenv').config();
 
 exports.auth = async(req, res, next) => {
     try{
-
-        const token = req.body || req.cookies.token || req.header("Authorisation").replace("Bearer ", "");
+        const authorization = req.get("Authorization");
+        const token = (req.cookies && req.cookies.token)
+            || (req.body && req.body.token)
+            || (authorization && authorization.startsWith("Bearer ")
+                ? authorization.slice(7)
+                : null);
         if(!token){
             return res.status(401).json({
                 success: false,
@@ -15,10 +19,12 @@ exports.auth = async(req, res, next) => {
 
         try{
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
-            req.user = decode;
+            req.user = {
+                ...decode,
+                accountType: decode.accountType || decode.role,
+            };
         } catch(error){
-            return res.staus(401).json({
+            return res.status(401).json({
                 success: false,
                 message: "Invalid token",
             })

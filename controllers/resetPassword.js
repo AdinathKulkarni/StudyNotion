@@ -54,14 +54,14 @@ exports.resetPassword = async(req, res) => {
 
         //if both doesnt match, then return
         if(password !== confirmPassword) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Passwords donot match, Please enter matching passwords",
             });
         }
 
         //get the user on basis of token 
-        const userDetails = await user.findOne({token: token});
+        const userDetails = await User.findOne({token: token});
         if(!userDetails){
             return res.json({
                 success: false,
@@ -81,9 +81,20 @@ exports.resetPassword = async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.findOneAndUpdate(
             {token: token},
-            {password: hashedPassword},
-            {new: true},
+            {
+                $set: {
+                    password: hashedPassword,
+                    token: null,
+                    resetPasswordExpires: null,
+                }
+            },
+            { returnDocument: 'after' },
         )
+
+        return res.status(203).json({
+            success: true,
+            message: "Password Updated successfully",
+        });
     } catch(error){
         return res.status(500).json({
             success: false,

@@ -9,7 +9,13 @@ require('dotenv').config();
 //send otp
 exports.sendOTP = async(req, res) => {
     try{
-        const {email} = req.body;
+        const email = req.body.email && req.body.email.trim().toLowerCase();
+        if(!email){
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid email address',
+            });
+        }
 
         //check if user is already present or not
         const isUserAlreadyExists = await User.findOne({email});
@@ -21,14 +27,13 @@ exports.sendOTP = async(req, res) => {
             });
         }
 
-        var otp = otpGenerator.generate(6, {
+        let otp = otpGenerator.generate(6, {
             upperCaseAlphabets: false,
             lowerCaseAlphabets: false,
             specialChars: false,
         });
 
-        console.log(otp);
-        const result = OTP.findOne({otp: otp});
+        let result = await OTP.findOne({otp});
 
         while(result){
             otp = otpGenerator.generate(6, {
@@ -36,13 +41,12 @@ exports.sendOTP = async(req, res) => {
                 lowerCaseAlphabets: false,
                 specialChars: false,
             });
-            result = OTP.findOne({otp: otp});
+            result = await OTP.findOne({otp});
         }
 
         const otpPayload = {email, otp};
 
-        const otpBody = await OTP.create(otpPayload);
-        console.log(otpBody);
+        await OTP.create(otpPayload);
         res.status(200).json({
             success: true,
             message: 'OTP sent successfully'
@@ -85,7 +89,8 @@ exports.signUp = async(req, res) => {
             });
         }
 
-        const existingUser = await User.findOne({email});
+        const normalizedEmail = email.trim().toLowerCase();
+        const existingUser = await User.findOne({email: normalizedEmail});
         if(existingUser){
             return res.status(400).json({
                 success: false,
@@ -94,13 +99,15 @@ exports.signUp = async(req, res) => {
         }
 
         //get the most recent otp from teh db
-        const recentOtp = await OTP.find({email}).sort({createdAt: -1}).limit(1);
-        if(recentOtp.length === 0){
-            return res.status.json({
+        const recentOtp = await OTP.findOne({email: normalizedEmail})
+            .sort({createdAt: -1});
+
+        if(!recentOtp){
+            return res.status(404).json({
                 success: false,
                 message: "Otp not found",
             });
-        } else if(otp !== recentOtp){
+        } else if(String(otp) !== recentOtp.otp){
             return res.status(400).json({
                 success: false,
                 message: "Otp doesnot match",
@@ -119,8 +126,8 @@ exports.signUp = async(req, res) => {
         const user = await User.create({
             firstName,
             lastName,
-            email,
-            constactNumber,
+            email: normalizedEmail,
+            contactNumber,
             password: hashedPassword,
             accountType,
             additionalDetails: profileDetails._id,
@@ -134,10 +141,11 @@ exports.signUp = async(req, res) => {
         })
 
     } catch(error){
-        console.log("Error occured while signing you up", error);
+        // console.log("Error occured while signing you up", error);
         return res.status(500).json({
             success: false,
             message: "Error while signing you up",
+            error: error.message,
         })
     }
 }
@@ -154,15 +162,15 @@ exports.login = async(req, res) => {
             });
         }
 
-        const isUserAlreadyExists = User.findOne({email});
-        if(!isUserAlreadyExists){
+        const user = await User.findOne({email});
+        if(!user){
             return res.status(404).json({
                 success: false,
                 message: "User not found, Please signup",
             });
         }
 
-        if(await brypt.compare(password, user.password)){
+        if(await bcrypt.compare(password, user.password)){
             const payload = {
                 email: user.email,
                 id: user._id,
@@ -173,16 +181,17 @@ exports.login = async(req, res) => {
             });
 
             user.token = token;
-            user.password = undefined;
+            const userDetails = user.toObject();
+            delete userDetails.password;
 
             const options = {
-                expiresIn: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
             }
 
             res.cookie("token", token, options).json({
                 success: true,
                 token,
-                user, 
+                user: userDetails,
                 message: "Login successfull",
             });
         } else {

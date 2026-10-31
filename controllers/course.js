@@ -22,7 +22,7 @@ exports.createCourse = async(req, res) => {
 
         //check for instructor
         const userId = req.user.id;
-        const instructorDetails = await User.findById({userId});
+        const instructorDetails = await User.findById(userId);
 
         if(!instructorDetails){
             return res.status(404).json({
@@ -44,7 +44,7 @@ exports.createCourse = async(req, res) => {
          const newCourse = await Course.create({
             courseName,
             courseDescription,
-            instructorDetails: instructorDetails._id,
+            instructor: instructorDetails._id,
             whatYouWillLearn: whatYouWillLearn,
             price,
             category: categoryDetails._id,
@@ -86,7 +86,7 @@ exports.getAllCourses = async(req, res) => {
                                             {instructor: true}, 
                                             {ratingAndReviews: true}, 
                                             {studentEnrolled: true}
-                                        ).populate("Instructor").exec();
+                                        ).populate("instructor").exec();
 
         return res.status(200).json({
             success: true,
@@ -96,7 +96,7 @@ exports.getAllCourses = async(req, res) => {
 
     } catch(error){
         return res.status(500).json({
-            success: true,
+            success: false,
             message: "Error while fetching all the courses",
             error: error.message,
         })
