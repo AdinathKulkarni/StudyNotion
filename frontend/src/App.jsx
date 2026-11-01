@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import HomePage from './pages/HomePage.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div>
-      <p>Hello world</p>
+    <div className='w-full min-h-screen bg-richblack-900 flex flex-col font-inter'>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
     </div>
   )
 }
