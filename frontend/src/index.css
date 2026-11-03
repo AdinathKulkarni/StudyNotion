@@ -4,6 +4,30 @@
 
 html, body {
   overflow-x: hidden;
+ }
+
+html, body, #root, *, *::before, *::after {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cGF0aCBkPSJNNC41IDNWMTkuNUw5LjYyIDE0LjM4SDE3LjI1TDQuNSAzWiIgZmlsbD0iYmxhY2siIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00LjUgM1YxOS41TDkuNjIgMTQuMzhIMTcuMjVMNC41IDNaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==") 4 4, auto !important;
+}
+
+a, button, input, select, textarea, span, p, h1, h2, h3, div, [role="button"], .font-mono {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cGF0aCBkPSJNNC41IDNWMTkuNUw5LjYyIDE0LjM4SDE3LjI1TDQuNSAzWiIgZmlsbD0iYmxhY2siIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00LjUgM1YxOS41TDkuNjIgMTQuMzhIMTcuMjVMNC41IDNaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==") 4 4, auto !important;
+}
+
+.homepage_bg{
+  background: url('./assets/Images/bghome.svg');
+}
+
+.codeblock{
+  /* From https://css.glass */
+/* From https://css.glass */
+/* From https://css.glass */
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(7.2px);
+  -webkit-backdrop-filter: blur(7.2px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 /* :root {

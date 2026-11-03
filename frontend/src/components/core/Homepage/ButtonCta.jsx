@@ -1,12 +1,19 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
+import { MdArrowRightAlt } from 'react-icons/md'
 
 const ButtonCta = ({text, active, linkTo}) => {
+  const variantStyles = active
+    ? "border-richblack-50 bg-yellow-50 text-black"
+    : "border-richblack-400 bg-richblack-800 text-richblack-5";
+
   return (
-        <div className={` ${active ? "bg-yellow-50 rounded-lg p-3 text-black hover:scale-95 transition-all border-b border-r border-richblack-50" : 
-        "bg-richblack-800 rounded-lg p-3 text-richblack-5 hover:scale-95 transition-all border-b border-r border-richblack-400"} flex`} >
-                    <Link to={linkTo}>{text}</Link>
-        </div>
+    <Link
+      to={linkTo}
+      className={`inline-flex items-center gap-2 rounded-lg border-b border-r px-4 py-3 font-bold transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-50 focus-visible:ring-offset-2 focus-visible:ring-offset-richblack-900 ${variantStyles}`}
+    >
+      {text}
+      {active && <MdArrowRightAlt aria-hidden="true" />}
+    </Link>
   )
 }
 

@@ -1,9 +1,10 @@
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage.jsx'
+import './index.css'
 
 function App() {
   return (
-    <div className='w-full min-h-screen bg-richblack-900 flex flex-col font-inter'>
+    <div className='w-full min-h-screen bg-richblack-900 flex flex-col font-inter '>
       <Routes>
         <Route path="/" element={<HomePage />} />
       </Routes>

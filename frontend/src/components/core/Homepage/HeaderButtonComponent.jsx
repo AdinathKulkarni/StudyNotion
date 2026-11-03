@@ -6,7 +6,7 @@ import ButtonCta from './ButtonCta'
 const HeaderButtonComponent = ({heading1, heading2, gradient, lineItem, btn1txt, btn2txt, link1, link2}) => {
   return (
         <div className='flex flex-col'>
-            <GradientHeading segments={[`${heading1}`,{ text: `${gradient}`, gradient: true }, `${heading2}` ]} />
+            <GradientHeading segments={[`${heading1}`,{ text: `${gradient}`, gradient: true }, `${heading2}` ]} active={true } />
             <LineItemText text={`${lineItem}`}/>
 
             <div className='flex gap-[24px] pt-[52px]'>
