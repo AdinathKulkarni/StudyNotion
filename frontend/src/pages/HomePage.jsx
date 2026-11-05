@@ -15,6 +15,7 @@ import CompareWithOthers from  "../assets/Images/Compare_with_others.svg"
 import PlanYourLessons from  "../assets/Images/Plan_your_lessons.svg"
 import KnowYourProgress from  "../assets/Images/Know_your_progress.svg"
 import Instructor from  "../assets/Images/Instructor.png"
+import ExploreMore from "../components/core/Homepage/ExploreMore";
 
 const htmlCodeblock = [
     "<!DOCTYPE html>",
@@ -88,21 +89,8 @@ const HomePage = () => {
 
 
             {/* Pending Card section */}
-
-
-            {/* Tab switch wala section - PENDING */}
-            <div className="bg-pure-greys-5 text-richblack-700">
-                <div className="homepage_bg h-[333px] w-screen">
-                    <div className="w-11/12 max-w-maxContent flex items-center gap-5 mx-auto justify-center">
-                        <div className="flex flex-row gap-7 text-white mt-20 ">
-                            <ButtonCta active={true} linkTo={"/signup"} text={"Explore Full Catalog"} />
-                            <ButtonCta active={false} linkTo={"/login"} text={"Learn More"} />
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div>
+                 <ExploreMore />
             </div>
 
             {/* Get the skills u need Section */}
