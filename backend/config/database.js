@@ -1,14 +1,10 @@
-const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
-exports.connect = () => {
-    mongoose.connect(process.env.DB_URL)
-    .then( () => {
-        console.log("Db connection successful✅");
-    })
-    .catch((error) => {
-        console.log("Error connecting to Database❌");
-        process.exit(1);
-    })
-}
+exports.connect = async() => {
+    if(!process.env.DB_URL){
+        throw new Error('DB_URL is not configured');
+    }
+
+    await mongoose.connect(process.env.DB_URL);
+    console.log("Database connection successful");
+};

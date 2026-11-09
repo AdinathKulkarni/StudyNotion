@@ -26,7 +26,7 @@ import VideoDetails from "./components/core/ViewCourse/VideoDetails";
 import Instructor from "./components/core/Dashboard/InstructorDashboard/Instructor";
 import { useSelector } from 'react-redux';
 import Home from './pages/Home.jsx'
-import Navbar from './components/Common/Navbar.jsx'
+import Navbar from './components/common/Navbar.jsx'
 
 function App() {
 

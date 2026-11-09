@@ -19,7 +19,6 @@ const profileRoutes = require('./routes/profile');
 const courseRoutes = require('./routes/course');
 
 const PORT = process.env.PORT || 4000;
-dbConnect.connect();
 
 //middlewares
 app.use(express.json());
@@ -35,9 +34,6 @@ app.use(fileUpload({
     tempFileDir: "/tmp",
 }))
 
-//connect with cloudinary
-cloudinaryConnect();
-
 //mount routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
@@ -52,6 +48,16 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`App is running as port ${PORT}`)
-})
+const startServer = async() => {
+    await dbConnect.connect();
+    cloudinaryConnect();
+
+    app.listen(PORT, () => {
+        console.log(`App is running as port ${PORT}`);
+    });
+};
+
+startServer().catch((error) => {
+    console.error(`Server startup failed: ${error.message}`);
+    process.exit(1);
+});
