@@ -84,10 +84,10 @@ const ExploreMore = () => {
         })}
       </div>
 
-        <div className='flex gap-8 mt-12'> 
+        {/* <div className='flex gap-8 mt-12'> 
             <ButtonCta active={true} linkTo={"/signup"} text={"Explore Full Catalog"} />
             <ButtonCta active={false} linkTo={"/login"} text={"Learn More"} />
-        </div>
+        </div> */}
       
     </section>
   );

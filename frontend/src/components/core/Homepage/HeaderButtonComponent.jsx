@@ -1,4 +1,3 @@
-import React from 'react'
 import GradientHeading from './GradientHeading'
 import LineItemText from './LineItemText'
 import ButtonCta from './ButtonCta'
