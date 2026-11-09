@@ -34,6 +34,11 @@ const courseSchema = mongoose.Schema({
     thumbnail: {
         type: String,
     },
+    status: {
+        type: String,
+        enum: ['Draft', 'Published'],
+        default: 'Draft',
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
@@ -45,6 +50,6 @@ const courseSchema = mongoose.Schema({
             ref: "User"
         }
     ]
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model("Course", courseSchema);

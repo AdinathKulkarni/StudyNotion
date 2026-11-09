@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const app = express();
 
@@ -8,7 +11,6 @@ const cookieParser = require('cookie-parser');
 
 const {cloudinaryConnect} = require('./config/cloudinary');
 const fileUpload = require('express-fileupload')
-const dotenv = require('dotenv');
 
 //import routes
 const userRoutes = require('./routes/user');
@@ -16,7 +18,6 @@ const paymentRoutes = require('./routes/payment');
 const profileRoutes = require('./routes/profile');
 const courseRoutes = require('./routes/course');
 
-dotenv.config();
 const PORT = process.env.PORT || 4000;
 dbConnect.connect();
 

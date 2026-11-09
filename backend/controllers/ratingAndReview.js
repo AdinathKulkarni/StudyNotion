@@ -1,6 +1,6 @@
 const RatingAndReview = require('../models/ratingAndReview');
 const Course = require('../models/course');
-const ratingAndReview = require('../models/ratingAndReview');
+const mongoose = require('mongoose');
 
 exports.createRating = async(req, res) => {
     try{
@@ -10,6 +10,16 @@ exports.createRating = async(req, res) => {
 
         //fetch data from req body
         const {rating, review, courseId} = req.body;
+
+        if(!mongoose.isValidObjectId(courseId) ||
+            !Number.isFinite(Number(rating)) ||
+            Number(rating) < 1 || Number(rating) > 5 ||
+            typeof review !== 'string' || !review.trim()){
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a course, a rating from 1 to 5, and a review',
+            });
+        }
 
         //check if user is enrolled or not
         const courseDetails = await Course.findOne(
@@ -47,20 +57,20 @@ exports.createRating = async(req, res) => {
         //attach it with course
 
         await Course.findByIdAndUpdate(
-            {_id: courseId}, 
+            courseId,
             {
-                $push: {
+                $addToSet: {
                     ratingAndReviews: reviewAndRating._id,
-                } 
+                }
             },
             {new: true},
         );
 
         //return response
         return res.status(200).json({
-            success: false,
+            success: true,
             message: "Rating and Review created successfully",
-            ratingAndReview,
+            ratingAndReview: reviewAndRating,
         })
         
     } catch(error){
@@ -118,7 +128,7 @@ exports.getAllRatings = async(req, res) => {
         })
         .populate({
             path: "course",
-            select: "coursename",
+            select: "courseName",
         })
         .exec();
 

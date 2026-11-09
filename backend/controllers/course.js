@@ -206,6 +206,19 @@ exports.getFullCourseDetails = async(req, res) => {
         const isEnrolled = course.studentEnrolled.some(
             (studentId) => studentId.toString() === req.user.id,
         );
+        const user = await User.findById(req.user.id)
+            .select('courseProgress')
+            .lean()
+            .exec();
+        const progress = user
+            ? await CourseProgress.findOne({
+                _id: {$in: user.courseProgress || []},
+                courseId: course._id,
+            })
+                .select('completedVideos')
+                .lean()
+                .exec()
+            : null;
 
         return res.status(200).json({
             success: true,
@@ -213,6 +226,7 @@ exports.getFullCourseDetails = async(req, res) => {
             data: {
                 ...course.toObject(),
                 isEnrolled,
+                completedVideos: progress?.completedVideos || [],
             },
         });
     } catch(error) {
@@ -226,7 +240,7 @@ exports.getFullCourseDetails = async(req, res) => {
 
 exports.editCourse = async(req, res) => {
     try{
-        const {courseId, courseName, courseDescription, whatYouWillLearn, price, category} = req.body;
+        const {courseId, courseName, courseDescription, whatYouWillLearn, price, category, status} = req.body;
         const thumbnail = req.files && req.files.thumbnailImage;
 
         if(!courseId || !mongoose.isValidObjectId(courseId)){
@@ -284,6 +298,15 @@ exports.editCourse = async(req, res) => {
                 });
             }
             updates.price = parsedPrice;
+        }
+        if(status !== undefined){
+            if(!['Draft', 'Published'].includes(status)){
+                return res.status(400).json({
+                    success: false,
+                    message: 'Status must be Draft or Published',
+                });
+            }
+            updates.status = status;
         }
 
         let newCategory;
