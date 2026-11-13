@@ -17,6 +17,7 @@ const userRoutes = require('./routes/user');
 const paymentRoutes = require('./routes/payment');
 const profileRoutes = require('./routes/profile');
 const courseRoutes = require('./routes/course');
+const reachRoutes = require('./routes/reach');
 
 const PORT = process.env.PORT || 4000;
 
@@ -39,6 +40,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/reach", reachRoutes);
 
 //default route
 app.get("/", (req, res) => {

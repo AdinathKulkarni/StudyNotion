@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 
 import CountryCode from "../data/countrycode.json"
 import { apiConnector } from "../../services/apiconnector"
@@ -11,7 +12,7 @@ const ContactUsForm = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm()
 
   const submitContactForm = async (data) => {
@@ -23,25 +24,22 @@ const ContactUsForm = () => {
         contactusEndpoint.CONTACT_US_API,
         data
       )
-      // console.log("Email Res - ", res)
-      setLoading(false)
+      if (!res.data.success) {
+        throw new Error(res.data.message || "Unable to send your message")
+      }
+      toast.success(res.data.message || "Message sent successfully")
+      reset()
     } catch (error) {
-      console.log("ERROR MESSAGE - ", error.message)
+      console.error("Could not send contact form message:", error)
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to send your message"
+      )
+    } finally {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({
-        email: "",
-        firstname: "",
-        lastname: "",
-        message: "",
-        phoneNo: "",
-      })
-    }
-  }, [reset, isSubmitSuccessful])
 
   return (
     <form

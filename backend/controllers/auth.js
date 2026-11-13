@@ -89,6 +89,13 @@ exports.signUp = async(req, res) => {
             });
         }
 
+        if(!["Student", "Instructor"].includes(accountType)){
+            return res.status(400).json({
+                success: false,
+                message: "Please choose a valid account type",
+            });
+        }
+
         const normalizedEmail = email.trim().toLowerCase();
         const existingUser = await User.findOne({email: normalizedEmail});
         if(existingUser){
@@ -103,9 +110,9 @@ exports.signUp = async(req, res) => {
             .sort({createdAt: -1});
 
         if(!recentOtp){
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: "Otp not found",
+                message: "OTP not found or expired. Please request a new one.",
             });
         } else if(String(otp) !== recentOtp.otp){
             return res.status(400).json({
@@ -155,18 +162,18 @@ exports.login = async(req, res) => {
 
         const {email, password} = req.body;
 
-        if(!email || !password){
+        if(typeof email !== "string" || !email.trim() || !password){
             return res.status(400).json({
                 success: false,
                 message: "Please fill all the details",
             });
         }
 
-        const user = await User.findOne({email});
+        const user = await User.findOne({email: email.trim().toLowerCase()});
         if(!user){
-            return res.status(404).json({
+            return res.status(401).json({
                 success: false,
-                message: "User not found, Please signup",
+                message: "Invalid email or password",
             });
         }
 
@@ -197,7 +204,7 @@ exports.login = async(req, res) => {
         } else {
             return res.status(401).json({
                 success: false,
-                message: "Incorrect Email or Password",
+                message: "Invalid email or password",
             });
         }
     } catch(error){
@@ -205,6 +212,54 @@ exports.login = async(req, res) => {
         res.status(400).json({
             success: false,
             message: "Error while logging in, Pls try again"
+        });
+    }
+}
+
+exports.changePassword = async(req, res) => {
+    try{
+        const {oldPassword, newPassword} = req.body;
+        if(!oldPassword || !newPassword){
+            return res.status(400).json({
+                success: false,
+                message: "Please provide your current and new passwords",
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        if(!(await bcrypt.compare(oldPassword, user.password))){
+            return res.status(401).json({
+                success: false,
+                message: "Current password is incorrect",
+            });
+        }
+
+        if(oldPassword === newPassword){
+            return res.status(400).json({
+                success: false,
+                message: "New password must be different from your current password",
+            });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Password changed successfully",
+        });
+    } catch(error){
+        console.error("Error changing password:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to change password",
         });
     }
 }
