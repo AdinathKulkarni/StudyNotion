@@ -82,15 +82,13 @@ exports.createCourse = async(req, res) => {
 
 exports.getAllCourses = async(req, res) => {
     try{
-
-        const allCourses = await Course.find({},
-                                            {courseName: true}, 
-                                            {price: true}, 
-                                            {thumbail: true}, 
-                                            {instructor: true}, 
-                                            {ratingAndReviews: true}, 
-                                            {studentEnrolled: true}
-                                        ).populate("instructor").exec();
+        const allCourses = await Course.find({status: 'Published'})
+            .select('courseName courseDescription whatYouWillLearn price thumbnail instructor category ratingAndReviews createdAt')
+            .populate('instructor', 'firstName lastName image')
+            .populate('category', 'name')
+            .populate('ratingAndReviews', 'rating')
+            .lean()
+            .exec();
 
         return res.status(200).json({
             success: true,
@@ -121,8 +119,10 @@ exports.getCourseDetails = async(req, res) => {
         const courseDetails = await Course.findById(courseId)
                                                 .populate({
                                                     path: "instructor",
+                                                    select: "firstName lastName image additionalDetails",
                                                     populate: {
-                                                        path: "additionalDetails"
+                                                        path: "additionalDetails",
+                                                        select: "gender about",
                                                     }
                                                 })
                                                 .populate("category")

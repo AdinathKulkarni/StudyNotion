@@ -20,13 +20,22 @@ const courseRoutes = require('./routes/course');
 const reachRoutes = require('./routes/reach');
 
 const PORT = process.env.PORT || 4000;
+const configuredOrigins = [
+    ...(process.env.FRONTEND_URLS || '').split(','),
+    process.env.FRONTEND_URL || '',
+].map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = configuredOrigins.length
+    ? configuredOrigins.map((origin) => new URL(origin).origin)
+    : ['http://localhost:3000'];
 
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: (origin, callback) => {
+            callback(null, !origin || allowedOrigins.includes(origin));
+        },
         credentials: true,
     })
 );

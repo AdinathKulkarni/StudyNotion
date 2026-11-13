@@ -89,7 +89,7 @@ exports.signUp = async(req, res) => {
             });
         }
 
-        if(!["Student", "Instructor"].includes(accountType)){
+        if(!["Admin", "Student", "Instructor"].includes(accountType)){
             return res.status(400).json({
                 success: false,
                 message: "Please choose a valid account type",

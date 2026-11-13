@@ -56,8 +56,19 @@ exports.categoryPageDetails = async(req, res) => {
         const {categoryId} = req.body;
 
         //get courses for specified id
+        const courseFields = 'courseName courseDescription whatYouWillLearn price thumbnail instructor category ratingAndReviews createdAt';
+        const coursePopulation = {
+            path: 'course',
+            match: {status: 'Published'},
+            select: courseFields,
+            populate: [
+                {path: 'instructor', select: 'firstName lastName image'},
+                {path: 'category', select: 'name'},
+                {path: 'ratingAndReviews', select: 'rating'},
+            ],
+        };
         const selectedCategory = await Category.findById(categoryId)
-                                .populate("course")
+                                .populate(coursePopulation)
                                 .exec();
 
         //validation
@@ -72,7 +83,7 @@ exports.categoryPageDetails = async(req, res) => {
         const differentCategories = await Category.find({
             _id: {$ne: categoryId}, // ne = not equal
         })
-        .populate("course")
+        .populate(coursePopulation)
         .exec();
 
         //get top selling courses
